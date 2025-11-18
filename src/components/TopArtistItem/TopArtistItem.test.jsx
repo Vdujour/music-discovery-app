@@ -37,6 +37,12 @@ describe('TopArtistItem component', () => {
         const link = within(listItem).getByRole('link', { name: /view artist/i });
         expect(link).toHaveAttribute('href', artist.external_urls.spotify);
 
+        // should check if first ClassName = "artist-title" contains 1. name artist
+        const titleDiv = within(listItem).getByText((content, element) => {
+            return element.className === 'artist-title' && content.startsWith('1. ');
+        });
+        expect(titleDiv).toBeInTheDocument();
+
         // uncomment to debug
         //screen.debug();
     });
