@@ -77,10 +77,10 @@ export default function MainNav() {
   return (
     <div className="main-nav-wrapper">
       <nav className="layout-nav main-nav-flex">
+        <DashboardLink />
         <TopTracksLink />
         <TopArtistsLink />
         <PlaylistsLink />
-        <DashboardLink />
       </nav>
       <AccountNav profile={profile} loading={loading} error={error} />
     </div>
