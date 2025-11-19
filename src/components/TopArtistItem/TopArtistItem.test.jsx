@@ -12,7 +12,7 @@ describe('TopArtistItem component', () => {
             name: 'Test Artist',
             images: [{ url: 'test.jpg' }, { url: 'test-medium.jpg' }, { url: 'test-small.jpg' }],
             genres: ['pop', 'rock'],
-            followers: { total: 1000 },
+            followers: { total: 100 },
             popularity: 85,
             external_urls: { spotify: 'https://open.spotify.com/artist/artist1' }
         };
@@ -36,6 +36,12 @@ describe('TopArtistItem component', () => {
         // link to artist page
         const link = within(listItem).getByRole('link', { name: /view artist/i });
         expect(link).toHaveAttribute('href', artist.external_urls.spotify);
+
+        // should check if first ClassName = "artist-title" contains 1. name artist
+        const titleDiv = within(listItem).getByText((content, element) => {
+            return element.className === 'artist-title' && content.startsWith('1. ');
+        });
+        expect(titleDiv).toBeInTheDocument();
 
         // uncomment to debug
         //screen.debug();
