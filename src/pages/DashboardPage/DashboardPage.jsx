@@ -6,8 +6,9 @@ import './DashboardPage.css';
 import '../PageLayout.css';
 import { handleTokenError } from '../../utils/handleTokenError.js';
 import { fetchUserTopTracks, fetchUserTopArtists } from '../../api/spotify-me.js';
+import SimpleCard from '../../components/SimpleCard/SimpleCard.jsx';
 
-const limit = 10
+const limit = 1;
 const timeRange = 'short_term';
 
 export default function DashboardPage() {
@@ -64,8 +65,8 @@ export default function DashboardPage() {
     return (
         <div>
             <h1>Dashboard Page</h1>
-            <p>Top Artists: {artists.length}</p>
-            <p>Top Tracks: {tracks.length}</p>
+            <SimpleCard imageUrl={artists[0]?.images[0]?.url} title={artists[0]?.name} subtitle={`Followers: ${artists[0]?.followers.total.toLocaleString()}`} link={artists[0]?.external_urls.spotify} />
+            <SimpleCard imageUrl={tracks[0]?.album.images[0]?.url} title={tracks[0]?.name} subtitle={`Artist: ${tracks[0]?.artists.map(artist => artist.name).join(', ')}`} link={tracks[0]?.external_urls.spotify} />
         </div>
     );
 
