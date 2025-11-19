@@ -4,11 +4,10 @@ import { useRequireToken } from '../../hooks/useRequireToken.js';
 import { useNavigate } from 'react-router-dom';
 import './DashboardPage.css';
 import '../PageLayout.css';
-
+import { handleTokenError } from '../../utils/handleTokenError.js';
 import { fetchUserTopTracks, fetchUserTopArtists } from '../../api/spotify-me.js';
 
-const limit = 1;
-
+const limit = 10
 const timeRange = 'short_term';
 
 export default function DashboardPage() {
@@ -33,32 +32,34 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (!token) return; // wait for auth check
-        // fetch user top artists when token changes
-        fetchUserTopArtists(token, limit, timeRange)
-          .then(res => {
-            if (res.error) {
-              if (!handleTokenError(res.error, navigate)) {
-                setError(res.error);
-              }
-            }
-            setArtists(res.data.items);
-          })
-          .catch(err => { setError(err.message); })
-          .finally(() => { setLoading(false); });
-
-        // fetch user top tracks when token changes
-        fetchUserTopTracks(token, limit, timeRange)
-            .then(res => {
-            if (res.error) {
-                if (!handleTokenError(res.error, navigate)) {
-                setError(res.error);
+        
+        // Fetch both artists and tracks in parallel
+        Promise.all([
+            fetchUserTopArtists(token, limit, timeRange),
+            fetchUserTopTracks(token, limit, timeRange)
+        ])
+        .then(([artistsRes, tracksRes]) => {
+            // Handle artists response
+            if (artistsRes.error) {
+                if (!handleTokenError(artistsRes.error, navigate)) {
+                    setError(artistsRes.error);
                 }
+            } else {
+                setArtists(artistsRes.data.items);
             }
-            setTracks(res.data.items);
-            })
-            .catch(err => { setError(err.message); })
-            .finally(() => { setLoading(false); });
-      }, [token, navigate]);
+            
+            // Handle tracks response
+            if (tracksRes.error) {
+                if (!handleTokenError(tracksRes.error, navigate)) {
+                    setError(tracksRes.error);
+                }
+            } else {
+                setTracks(tracksRes.data.items);
+            }
+        })
+        .catch(err => { setError(err.message); })
+        .finally(() => { setLoading(false); });
+    }, [token, navigate]);
 
     return (
         <div>
