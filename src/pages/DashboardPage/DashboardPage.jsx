@@ -21,9 +21,11 @@ export default function DashboardPage() {
     // state for tracks data
     const [tracks, setTracks] = useState([]);
 
-    // state for loading and error
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // state for loading and error - separate for artists and tracks
+    const [loadingArtists, setLoadingArtists] = useState(true);
+    const [loadingTracks, setLoadingTracks] = useState(true);
+    const [errorArtists, setErrorArtists] = useState(null);
+    const [errorTracks, setErrorTracks] = useState(null);
 
     // require token to fetch playlists
     const { token } = useRequireToken();
@@ -34,32 +36,33 @@ export default function DashboardPage() {
     useEffect(() => {
         if (!token) return; // wait for auth check
         
-        // Fetch both artists and tracks in parallel
-        Promise.all([
-            fetchUserTopArtists(token, limit, timeRange),
-            fetchUserTopTracks(token, limit, timeRange)
-        ])
-        .then(([artistsRes, tracksRes]) => {
-            // Handle artists response
+        // Fetch artists
+        fetchUserTopArtists(token, limit, timeRange)
+        .then((artistsRes) => {
             if (artistsRes.error) {
                 if (!handleTokenError(artistsRes.error, navigate)) {
-                    setError(artistsRes.error);
+                    setErrorArtists(artistsRes.error);
                 }
             } else {
                 setArtists(artistsRes.data.items);
             }
-            
-            // Handle tracks response
+        })
+        .catch(err => { setErrorArtists(err.message); })
+        .finally(() => { setLoadingArtists(false); });
+        
+        // Fetch tracks
+        fetchUserTopTracks(token, limit, timeRange)
+        .then((tracksRes) => {
             if (tracksRes.error) {
                 if (!handleTokenError(tracksRes.error, navigate)) {
-                    setError(tracksRes.error);
+                    setErrorTracks(tracksRes.error);
                 }
             } else {
                 setTracks(tracksRes.data.items);
             }
         })
-        .catch(err => { setError(err.message); })
-        .finally(() => { setLoading(false); });
+        .catch(err => { setErrorTracks(err.message); })
+        .finally(() => { setLoadingTracks(false); });
     }, [token, navigate]);
 
     return (
@@ -67,22 +70,25 @@ export default function DashboardPage() {
             <h1 id="dashboard-title" className="page-title">Dashboard</h1>
             <h2 className="dashboard-subtitle">Your top artist and track</h2>
             
-            {loading && <output className="dashboard-loading">Loading...</output>}
-            {error && !loading && <div className="dashboard-error" role="alert">{error}</div>}
+            {loadingTracks && <output className="dashboard-loading" data-testid="loading-tracks-indicator">Loading tracks</output>}
+            {loadingArtists && <output className="dashboard-loading" data-testid="loading-artists-indicator">Loading artists</output>}
             
-            {!loading && !error && (
+            {errorArtists && !loadingArtists && <div className="dashboard-error" data-testid="error-artists-indicator" role="alert">{errorArtists}</div>}
+            {errorTracks && !loadingTracks && <div className="dashboard-error" data-testid="error-tracks-indicator" role="alert">{errorTracks}</div>}
+            
+            {!loadingArtists && !loadingTracks && !errorArtists && !errorTracks && (
                 <div className="dashboard-content">
                     <SimpleCard 
                         imageUrl={artists[0]?.images[0]?.url} 
                         title={artists[0]?.name} 
-                        subtitle={`Followers: ${artists[0]?.followers.total.toLocaleString()}`} 
-                        link={artists[0]?.external_urls.spotify} 
+                        subtitle={`Followers: ${artists[0]?.followers?.total?.toLocaleString() || '0'}`} 
+                        link={artists[0]?.external_urls?.spotify} 
                     />
                     <SimpleCard 
-                        imageUrl={tracks[0]?.album.images[0]?.url} 
+                        imageUrl={tracks[0]?.album?.images[0]?.url} 
                         title={tracks[0]?.name} 
-                        subtitle={`Artist: ${tracks[0]?.artists.map(artist => artist.name).join(', ')}`} 
-                        link={tracks[0]?.external_urls.spotify} 
+                        subtitle={`Artist: ${tracks[0]?.artists?.map(artist => artist.name).join(', ') || 'Unknown'}`} 
+                        link={tracks[0]?.external_urls?.spotify} 
                     />
                 </div>
             )}
