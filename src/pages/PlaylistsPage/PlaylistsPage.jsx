@@ -23,6 +23,9 @@ export default function PlaylistsPage() {
 
   // state for playlists data
   const [playlists, setPlaylists] = useState([]);
+  
+  // state for total count of playlists on the account
+  const [totalPlaylists, setTotalPlaylists] = useState(0);
 
   // state for loading and error
   const [loading, setLoading] = useState(true);
@@ -45,16 +48,20 @@ export default function PlaylistsPage() {
             setError(res.error);
           }
         }
+        setTotalPlaylists(res.data.total || 0);
         setPlaylists(res.data.items);
       })
       .catch(err => { setError(err.message); })
       .finally(() => { setLoading(false); });
   }, [token, navigate]);
 
+  // Calculate the number to display: minimum between limit and actual count
+  const count_playlists = Math.min(limit, totalPlaylists || limit);
+
   return (
     <section className="playlists-container page-container" aria-labelledby="playlists-title">
       <h1 id="playlists-title" className="playlists-title page-title">Your Playlists</h1>
-      <h2 className="playlists-count">{limit} Playlists</h2>
+      <h2 className="playlists-count">{count_playlists} Playlists</h2>
       {loading && <output className="playlists-loading" data-testid="loading-indicator">Loading playlists…</output>}
       {error && !loading && <div className="playlists-error" role="alert">{error}</div>}
       {!loading && !error && (
