@@ -30,7 +30,7 @@ export default function PlayListItem({ playlist }) {
         Open
       </a>
       <a
-        href={playlist.external_urls.spotify}
+        href={`detail-playlist/${playlist.id}`}
         rel="noopener noreferrer"
         className="playlist-link"
       >
