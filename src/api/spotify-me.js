@@ -125,3 +125,25 @@ export async function fetchUserTopTracks(token, limit = 10, timeRange = 'short_t
     return { error: 'Failed to fetch top tracks.', data: { items: [], total: 0 } };
   }
 }
+
+export async function fetchUserByID(token, limit = 10, timeRange = 'short_term') {
+  // early return if no token
+  if (!token) {
+    return { error: 'No access token found.', tracks: [] };
+  }
+  try {
+    // fetch top tracks from Spotify API
+    const res = await fetch(`${SPOTIFY_API_BASE}/me/top/tracks?limit=${limit}&time_range=${timeRange}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    // handle potential API error
+    if (data.error) {
+      return { error: data.error.message, tracks: [] };
+    }
+    // return fetched tracks
+    return { data, error: null };
+  } catch {
+    return { error: 'Failed to fetch top tracks.', data: { items: [], total: 0 } };
+  }
+}
