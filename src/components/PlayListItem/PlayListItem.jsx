@@ -29,6 +29,13 @@ export default function PlayListItem({ playlist }) {
       >
         Open
       </a>
+      <a
+        href={playlist.external_urls.spotify}
+        rel="noopener noreferrer"
+        className="playlist-link"
+      >
+        Détail
+      </a>
     </li>
   );
 }
