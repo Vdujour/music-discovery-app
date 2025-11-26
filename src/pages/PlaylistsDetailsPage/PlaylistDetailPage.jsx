@@ -37,7 +37,7 @@ export default function PlaylistPage() {
                 setError(res.error);
               }
             } else {
-              setPlaylist(res.playlist);
+              setPlaylist(res.data);
             }
           })
           .catch(err => { setError(err.message); })

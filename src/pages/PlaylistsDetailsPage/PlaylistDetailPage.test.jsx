@@ -37,7 +37,7 @@ describe('PlaylistPage', () => {
     beforeEach(() => {
         const tokenValue = 'test-token';
         jest.spyOn(window.localStorage.__proto__, 'getItem').mockImplementation((key) => key === KEY_ACCESS_TOKEN ? tokenValue : null);
-        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ playlist: playlistData, error: null });
+        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ data: playlistData, error: null });
     });
 
     afterEach(() => {
@@ -95,7 +95,7 @@ describe('PlaylistPage', () => {
     });
 
     test('displays error message on fetch failure', async () => {
-        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ playlist: null, error: 'Failed to fetch playlist' });
+        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ data: null, error: 'Failed to fetch playlist' });
 
         render(
             <MemoryRouter initialEntries={['/playlist/playlist1']}>
@@ -138,7 +138,7 @@ describe('PlaylistPage', () => {
 
     test("handleTokenError called on token expiry error", async () => {
         const handleTokenErrorSpy = jest.spyOn(require('../../utils/handleTokenError.js'), 'handleTokenError');
-        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ playlist: null, error: 'The access token expired' });
+        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ data: null, error: 'The access token expired' });
 
         render(
             <MemoryRouter initialEntries={['/playlist/playlist1']}>
