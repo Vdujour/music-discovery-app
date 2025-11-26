@@ -45,23 +45,43 @@ export default function PlaylistDetailPage() {
       }, [token, id, navigate]);
 
     return (
-        <section className="playlist-detail-container page-container" aria-labelledby="playlist-title">
-            <h1 id="playlist-title" className="page-title">{playlist?.name || 'Playlist'}</h1>
-            
+        <section className="playlist-container page-container" aria-labelledby="playlist-title">
             {loading && <output className="playlist-loading">Loading playlist...</output>}
             {error && !loading && <div className="playlist-error" role="alert">{error}</div>}
             
             {!loading && !error && playlist && (
-                <div>
-                    <p className="playlist-description">{playlist.description}</p>
-                    <p className="playlist-info">{playlist.tracks.total} tracks</p>
+                <>
+                    <header className="playlist-header">
+                        <div className="playlist-header-image">
+                            <img 
+                                src={playlist.images?.[0]?.url || '/placeholder-playlist.png'} 
+                                alt={`${playlist.name} cover`}
+                                className="playlist-cover"
+                            />
+                        </div>
+                        <div className="playlist-header-text-with-link">
+                            <div className="playlist-header-text">
+                                <h1 id="playlist-title" className="playlist-title">{playlist.name}</h1>
+                                <p className="playlist-subtitle">{playlist.description || 'Aucune description'}</p>
+                                <p className="playlist-info">{playlist.tracks.total} tracks</p>
+                            </div>
+                            <a 
+                                href={playlist.external_urls?.spotify} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="playlist-spotify-link"
+                            >
+                                Ouvrir sur Spotify
+                            </a>
+                        </div>
+                    </header>
                     
                     <ol className="tracks-list">
                         {playlist.tracks.items.map((item) => (
                             <TrackItem key={item.track.id} track={item.track} />
                         ))}
                     </ol>
-                </div>
+                </>
             )}
         </section>
     );
