@@ -158,4 +158,41 @@ describe('PlaylistPage', () => {
 
         expect(handleTokenErrorSpy).toHaveBeenCalledWith('The access token expired', expect.any(Function));
     });
+
+    test('renders playlist with missing images and description', async () => {
+        const playlistWithoutOptionalFields = {
+            id: 'playlist2',
+            name: 'Minimal Playlist',
+            description: '',
+            images: [],
+            owner: { display_name: 'User2' },
+            external_urls: { spotify: 'https://open.spotify.com/playlist/playlist2' },
+            tracks: {
+                total: 0,
+                items: [],
+            },
+        };
+
+        jest.spyOn(spotifyApi, 'fetchPlaylistById').mockResolvedValue({ data: playlistWithoutOptionalFields, error: null });
+
+        render(
+            <MemoryRouter initialEntries={['/playlist/playlist2']}>
+                <Routes>
+                    <Route path="/playlist/:id" element={<PlaylistPage />} />
+                </Routes>
+            </MemoryRouter>
+        );
+
+        // wait for loading to finish
+        await waitFor(() => {
+            expect(screen.queryByTestId('loading-indicator')).not.toBeInTheDocument();
+        });
+
+        // verify fallback image is used
+        const img = screen.getByAltText(`Cover of ${playlistWithoutOptionalFields.name}`);
+        expect(img).toHaveAttribute('src', '/placeholder-playlist.png');
+
+        // verify fallback description is displayed
+        expect(screen.getByRole('heading', { level: 2, name: 'Aucune description' })).toBeInTheDocument();
+    });
 });

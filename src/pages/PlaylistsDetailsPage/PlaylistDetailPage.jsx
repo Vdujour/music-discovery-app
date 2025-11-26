@@ -4,7 +4,7 @@ import { useRequireToken } from '../../hooks/useRequireToken.js';
 import TrackItem from '../../components/TrackItem/TrackItem.jsx';
 import { fetchPlaylistById } from '../../api/spotify-playlists.js';
 import { handleTokenError } from '../../utils/handleTokenError.js';
-import './PlaylistDetailPage.css';
+import '../PlaylistPage.css';
 import '../PageLayout.css';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
@@ -61,8 +61,8 @@ export default function PlaylistPage() {
                         </div>
                         <div className="playlist-header-text-with-link">
                             <div className="playlist-header-text">
-                                <h1 id="playlist-title" className="playlist-title">{playlist.name}</h1>
-                                <h2 className="playlist-subtitle">{playlist.description || 'Aucune description'}</h2>
+                                <h1 id="playlist-title" className="playlists-title">{playlist.name}</h1>
+                                <h2 className="playlists-subtitle">{playlist.description || 'Aucune description'}</h2>
                                 <p className="playlist-info">{playlist.tracks.total} tracks</p>
                             </div>
                             <a 
