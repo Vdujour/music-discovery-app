@@ -9,7 +9,7 @@ import '../PageLayout.css';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
-export default function PlaylistDetailPage() {
+export default function PlaylistPage() {
     // Initialize navigate function
     const navigate = useNavigate();
     const { id } = useParams();
@@ -25,7 +25,7 @@ export default function PlaylistDetailPage() {
     const { token } = useRequireToken();
 
     // Set document title
-    useEffect(() => { document.title = buildTitle('Détail playlist'); }, []);
+    useEffect(() => { document.title = buildTitle('Playlist'); }, []);
 
     useEffect(() => {
         if (!token || !id) return; // wait for auth check and id
@@ -37,7 +37,7 @@ export default function PlaylistDetailPage() {
                 setError(res.error);
               }
             } else {
-              setPlaylist(res.data);
+              setPlaylist(res.playlist);
             }
           })
           .catch(err => { setError(err.message); })
@@ -46,7 +46,7 @@ export default function PlaylistDetailPage() {
 
     return (
         <section className="playlist-container page-container" aria-labelledby="playlist-title">
-            {loading && <output className="playlist-loading">Loading playlist...</output>}
+            {loading && <output className="playlist-loading" role="status" data-testid="loading-indicator">Loading playlist...</output>}
             {error && !loading && <div className="playlist-error" role="alert">{error}</div>}
             
             {!loading && !error && playlist && (
@@ -55,14 +55,14 @@ export default function PlaylistDetailPage() {
                         <div className="playlist-header-image">
                             <img 
                                 src={playlist.images?.[0]?.url || '/placeholder-playlist.png'} 
-                                alt={`${playlist.name} cover`}
+                                alt={`Cover of ${playlist.name}`}
                                 className="playlist-cover"
                             />
                         </div>
                         <div className="playlist-header-text-with-link">
                             <div className="playlist-header-text">
                                 <h1 id="playlist-title" className="playlist-title">{playlist.name}</h1>
-                                <p className="playlist-subtitle">{playlist.description || 'Aucune description'}</p>
+                                <h2 className="playlist-subtitle">{playlist.description || 'Aucune description'}</h2>
                                 <p className="playlist-info">{playlist.tracks.total} tracks</p>
                             </div>
                             <a 
@@ -71,7 +71,7 @@ export default function PlaylistDetailPage() {
                                 rel="noopener noreferrer"
                                 className="playlist-spotify-link"
                             >
-                                Ouvrir sur Spotify
+                                Open in Spotify
                             </a>
                         </div>
                     </header>
