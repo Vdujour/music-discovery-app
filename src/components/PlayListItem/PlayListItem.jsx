@@ -29,6 +29,13 @@ export default function PlayListItem({ playlist }) {
       >
         Open
       </a>
+      <a
+        href={`detail-playlist/${playlist.id}`}
+        rel="noopener noreferrer"
+        className="playlist-link"
+      >
+        Détail
+      </a>
     </li>
   );
 }

@@ -125,3 +125,4 @@ export async function fetchUserTopTracks(token, limit = 10, timeRange = 'short_t
     return { error: 'Failed to fetch top tracks.', data: { items: [], total: 0 } };
   }
 }
+

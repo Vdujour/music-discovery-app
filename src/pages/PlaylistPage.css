@@ -64,7 +64,12 @@
 	color: #fff;
 }
 
-.playlists-title { font-size: clamp(1.75rem,5vw,2.5rem); font-weight:700; margin-bottom: .35rem; }
+.playlists-title { 
+	font-size: clamp(1.75rem,5vw,2.5rem); 
+	font-weight: 700; 
+	margin-bottom: .35rem;
+	color: #000;
+}
 
 /* Multi-line truncation for description */
 .playlists-subtitle {
@@ -79,6 +84,11 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 840px;
+}
+
+.playlist-info {
+	color: #333;
+	font-size: 0.95rem;
 }
 
 .playlist-loading, .playlist-error { text-align: center; margin-top: 10vh; }
